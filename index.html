@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.css" />
+
+    <style>
+        #map {
+            width: 1000px;
+            height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.8.0/leaflet.js"></script>
+
+    <div id="map"></div>
+
+    <script>
+        const endpoint = 'https://api.data.gov.sg/v1/environment/psi'
+
+        async function psiData(map) {
+
+            await fetch(endpoint).then((data) => {
+                if (data.ok) {
+                    return data.json();
+                }
+                else {
+                    console.error('PSI readings from API is currently unavailable')
+                    return
+                }
+            }).then(data => {
+                console.log(data)
+                let westLat = data.region_metadata[0].label_location.latitude
+                let westLong = data.region_metadata[0].label_location.longitude
+                let westPsi = data.items[0].readings.psi_twenty_four_hourly.west
+
+                let eastLat = data.region_metadata[2].label_location.latitude
+                let eastLong = data.region_metadata[2].label_location.longitude
+                let eastPsi = data.items[0].readings.psi_twenty_four_hourly.east
+
+                let centLat = data.region_metadata[3].label_location.latitude
+                let centLong = data.region_metadata[3].label_location.longitude
+                let centPsi = data.items[0].readings.psi_twenty_four_hourly.central
+
+                let southLat = data.region_metadata[4].label_location.latitude
+                let southLong = data.region_metadata[4].label_location.longitude
+                let southPsi = data.items[0].readings.psi_twenty_four_hourly.south
+
+                let northLat = data.region_metadata[5].label_location.latitude
+                let northLong = data.region_metadata[5].label_location.longitude
+                let northPsi = data.items[0].readings.psi_twenty_four_hourly.north
+
+                var west = L.tooltip({
+                    permanent: true,
+                    direction: 'center',
+                    className: 'text'
+                }).setContent(`${westPsi}`).setLatLng([westLat, westLong])
+                    .addTo(map)
+
+                var east = L.tooltip({
+                    permanent: true,
+                    direction: 'center',
+                    className: 'text'
+                }).setContent(`${eastPsi}`).setLatLng([eastLat, eastLong])
+                    .addTo(map)
+
+                var cent = L.tooltip({
+                    permanent: true,
+                    direction: 'center',
+                    className: 'text'
+                }).setContent(`${centPsi}`).setLatLng([centLat, centLong])
+                    .addTo(map)
+
+                var south = L.tooltip({
+                    permanent: true,
+                    direction: 'center',
+                    className: 'text'
+                }).setContent(`${southPsi}`).setLatLng([southLat, southLong])
+                    .addTo(map)
+
+                var north = L.tooltip({
+                    permanent: true,
+                    direction: 'center',
+                    className: 'text'
+                }).setContent(`${northPsi}`).setLatLng([northLat, northLong])
+                    .addTo(map)
+
+                var westCircle = L.circle([westLat, westLong], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.4,
+                    radius: 2000
+                }).addTo(map)
+
+                var eastCircle = L.circle([eastLat, eastLong], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.4,
+                    radius: 2000
+                }).addTo(map)
+
+                var centralCircle = L.circle([centLat, centLong], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.4,
+                    radius: 2000
+                }).addTo(map)
+
+                var southCircle = L.circle([southLat, southLong], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.4,
+                    radius: 2000
+                }).addTo(map)
+
+                var northCircle = L.circle([northLat, northLong], {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.4,
+                    radius: 2000
+                }).addTo(map)
+            })
+
+        }
+
+        var tiles = L.tileLayer('https://maps-{s}.onemap.sg/v3/Default/{z}/{x}/{y}.png', {
+            detectRetina: true,
+            maxZoom: 18,
+            minZoom: 11,
+            //Do not remove this attribution
+            attribution: '<img src="https://www.onemap.gov.sg/docs/maps/images/oneMap64-01.png" style="height:20px;width:20px;"/> OneMap | Map data &copy; contributors, <a href="http://SLA.gov.sg">Singapore Land Authority</a>'
+        });
+
+        let map = new L.Map('map', { center: [1.347833, 103.809357], zoom: 12 })
+            .addLayer(tiles);
+
+
+        psiData(map);
+
+    </script>
+</body>
+
+</html>
