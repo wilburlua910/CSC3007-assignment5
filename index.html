@@ -10,6 +10,15 @@
             width: 1000px;
             height: 600px;
         }
+
+        .leaflet-tooltip-pane .text {
+            color: black;
+            font-weight: bold;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+            font-size: 2em;
+        }
     </style>
 </head>
 
@@ -63,7 +72,7 @@
                 var east = L.tooltip({
                     permanent: true,
                     direction: 'center',
-                    className: 'text'
+                    className: 'text',
                 }).setContent(`${eastPsi}`).setLatLng([eastLat, eastLong])
                     .addTo(map)
 
